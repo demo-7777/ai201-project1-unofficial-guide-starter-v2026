@@ -30,54 +30,61 @@
 
 ## Chunking Strategy
 
-**Chunk size:**
-**Overlap:**
+**Chunk size: 500 characters**
+**Overlap: No fixed overlap, chunks are grouped by paragraph boundaries instead.**
 
-<!-- What about YOUR documents made you pick these numbers? Short posts and
-     long sectioned guides don't want the same chunking, and "800 seemed
-     reasonable" earns nothing. Point at something you noticed when you read
-     the documents in Milestone 1.
+I chose this strategy because the campus_life documents are short posts, with most documents already fitting within a few hundred characters. In Milestone 1, the starter produced 88 documents and 88 chunks, which showed that the default 800-character splitter rarely split anything. I changed the strategy to group complete paragraphs together up to about 500 characters so each chunk stays focused while preserving complete ideas.
 
-     If you changed your mind partway through, say so and say why. That's worth
-     more than pretending you got it right first time.
-
-     Milestone 3. -->
+This produced 90 chunks instead of 88, and the sampled chunks were still understandable without needing neighboring chunks.
 
 ## Sample Chunks
 
-<!-- Five chunks, pasted as text. Label each one and name the file it came from
-     AND the function that produced it — the grader checks your code against
-     what you claim here.
+======================================================================
+Chunk 1  |  source: admin_add_drop_deadline.txt#0  |  produced by: chunker.py::split_documents
+======================================================================
+On the add/drop deadline
 
-     `python app.py chunks -n 5` prints all three for you. Copy them straight
-     across.
+You can add a course through the end of the second week. Dropping is a longer window — through the end of week six — but a drop after week two shows as a W on your transcript. Nothing anywhere on the registrar's site says this plainly, and students find out from each other.
 
-     Milestone 3. -->
+======================================================================
+Chunk 2  |  source: course_biol_160_exams.txt#0  |  produced by: chunker.py::split_documents
+======================================================================
+BIOL 160 Cell Biology — assessment
 
-**Chunk 1** — source: `` — produced by: ``
+Four unit tests and a cumulative final. Not curved.
 
-```
-```
+The unit tests come fast, roughly every three weeks; falling behind once is very hard to recover from.
 
-**Chunk 2** — source: `` — produced by: ``
+======================================================================
+Chunk 3  |  source: course_math_220_exams.txt#0  |  produced by: chunker.py::split_documents
+======================================================================
+MATH 220 Linear Algebra — assessment
 
-```
-```
+Two midterms and a cumulative final. Curved to a b- median.
 
-**Chunk 3** — source: `` — produced by: ``
+The problem sets are the course; the lectures make sense afterwards rather than during.
 
-```
-```
+======================================================================
+Chunk 4  |  source: dining_the_ridgeway_cafe.txt#0  |  produced by: chunker.py::split_documents
+======================================================================
+The Ridgeway Café
 
-**Chunk 4** — source: `` — produced by: ``
+Second-year here. Wait times: 10 to 15 minutes at 12:30, none after 2:00. The thing worth going for is the only place on campus with real espresso. The thing to know is that seating is tight; about 40 seats for a building of 900.
 
-```
-```
+Hours are 7:00am to 4:00pm weekdays only. Costs declining balance only, no meal swipes.
 
-**Chunk 5** — source: `` — produced by: ``
+======================================================================
+Chunk 5  |  source: housing_morrow_house.txt#0  |  produced by: chunker.py::split_documents
+======================================================================
+Morrow House — what it's actually like
 
-```
-```
+Just finished a year in this building. Built 1954, partially renovated 2008. Rooms are singles and doubles, hall bathrooms.
+
+The good: cheapest housing tier by about $900 a year, and the singles are real singles.
+
+The bad: known damp problem on the ground floor; two rooms were taken offline in 2024.
+
+Laundry costs $1.50 wash, $1.25 dry, coin or card. On noise: loud until about 1am on weekends, no enforced quiet hours.
 
 ## Sample Answer
 
