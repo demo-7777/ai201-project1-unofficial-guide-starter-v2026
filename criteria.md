@@ -23,6 +23,9 @@ For at least 4 of my 5 test questions, the retrieved chunks include one that
 contains the answer.
 
 **Why this target:**
+
+I chose 4 of 5 because the system should retrieve useful information most of the time, while still allowing for one difficult question or retrieval mistake.
+
 <!-- e.g. "One of my questions is about a topic only two documents mention, so
      I expect that one to be hard." -->
 
@@ -33,6 +36,9 @@ contains the answer.
 Every answer the system produces names at least one source document.
 
 **Why this target:**
+
+I chose this because every answer should be traceable back to the documents instead of relying on unsupported information.
+
 <!-- Why all five and not four? What about your setup makes that achievable —
      or what would have to go wrong for it not to be? -->
 
@@ -50,12 +56,17 @@ in at least 4 of 5 tries.
      just keep five of them, or the "4 of 5" above has nothing to be 4 of. -->
 
 **Why this target:**
+
+I chose 4 of 5 because the system should usually recognize when the corpus does not contain enough information, while allowing for an occasional incorrect match.
+
 <!-- What did your distances look like when you set the cutoff in Milestone 4?
      Was there a clean gap, or did the two groups overlap? -->
 
 ---
 
 ## 4. Something about your chunks
+
+At least 4 of 5 sampled chunks should contain enough context to be understood without reading neighboring chunks.
 
 <!-- YOU WRITE THIS ONE.
 
@@ -73,11 +84,13 @@ in at least 4 of 5 tries.
 
 **Why this target:**
 
-
+I chose 4 of 5 because most chunks should represent complete ideas, while allowing one chunk to be less clear because of where the text was split.
 
 ---
 
 ## 5. Your choice
+
+For at least 5 of 5 test questions, the system should return a relevant source within the top 3 retrieved chunks.
 
 <!-- YOU WRITE THIS ONE TOO.
 
@@ -91,7 +104,7 @@ in at least 4 of 5 tries.
 
 **Why this target:**
 
-
+I chose 5 of 5 because I want relevant information to appear near the top of the retrieval results for every question rather than being buried among weaker matches.
 
 ---
 
