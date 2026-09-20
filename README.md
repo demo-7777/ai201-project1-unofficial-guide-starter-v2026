@@ -22,6 +22,8 @@
 
 ## What This Does
 
+This project uses the campus_life corpus to answer questions about student life using info from the provided documents. It can answer questions about topics like dining, housing, courses, parking, and campus facilities. The system retrieves the most relevant document chunks, checks whether they are relevant enough to use, and then generates an answer based only on those chunks. Each answer also includes the source document so the information can be checked.
+
 <!-- Three or four sentences. Which corpus you picked, and the kinds of
      questions your system answers. Write it for someone who has never seen
      this repo.
@@ -93,12 +95,22 @@ Laundry costs $1.50 wash, $1.25 dry, coin or card. On noise: loud until about 1a
 
 **Question:**
 
+"What are the wait times at The Ridgeway Café around 12:30?"
+
 **Answer:**
+
+"The wait times at The Ridgeway Café are 10 to 15 minutes at 12:30."
+
+**Source:**
+
+dining_the_ridgeway_cafe.txt
 
 ```
 ```
 
 **My relevance cutoff:**
+
+0.7
 
 <!-- The number you set in config.py, and how you got there.
 
@@ -111,7 +123,16 @@ Laundry costs $1.50 wash, $1.25 dry, coin or card. On noise: loud until about 1a
 
 | Question | In corpus? | Best distance |
 |---|---|---|
-|  |  |  |
+| What lunches do students mention ordering most often? | Yes | 0.6203 |
+| What do students say about how difficult it is to find parking? | Yes | 0.5795 |
+| What do students say about professors' office hour availability? | Yes | 0.5168 |
+| What steps do students mention for changing roommates? | Yes | 0.5822 |
+| What times do students say the gym is least crowded? | Yes | 0.5086 |
+| What is the capital of Mongolia? | No | 0.8246 |
+| How do I change the oil in a diesel engine? | No | 0.9340 |
+| Who won the 1994 World Cup? | No | 0.8859 |
+| What is the recommended dosage of ibuprofen for a headache? | No | 0.8442 |
+| How do I write a for loop in Rust? | No | 0.8960 |
 
 ## How I Used AI
 
@@ -126,7 +147,11 @@ Laundry costs $1.50 wash, $1.25 dry, coin or card. On noise: loud until about 1a
 
 **1.**
 
+I used AI to help review my five test questions and make them more specific and easier to check. The AI suggested clearer wording and more specific expected phrases. I then edited the questions myself so they matched the topics I wanted to test in the campus_life corpus.
+
 **2.**
+
+I used AI to help revise the chunking logic in chunker.py. It suggested grouping text by paragraph boundaries with a target size of about 500 characters instead of using the starter’s fixed 800-character windows. I added that approach, ran the index again, and checked five sample chunks to make sure they were still understandable on their own.
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
