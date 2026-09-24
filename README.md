@@ -180,11 +180,42 @@ I used AI to help revise the chunking logic in chunker.py. It suggested grouping
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 1 of 5  | 1 of 5 | 1 of 5 | MISSED |
+| 2. Every answer names a source | 5 of 5 | 1 of 5 | 1 of 5 | 1 of 5 | MISSED |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 4. Sampled chunks have enough context | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 5. Relevant source appears in top 3 | 5 of 5 | 2 of 5 | 2 of 5 | 2 of 5 | MISSED |
+
+Criterion 1 and 2: 
+
+According to *admin_parking_permits.txt*, student permits for the west lots sell out in about three days, while the east lot never sells out because it is a 12-minute walk. There is no waitlist, so students who miss the window legally park on Verrill Street and walk in.
+
+Criterion 3: 
+
+Question: What is the capital of Mongolia?
+Best distance: 0.825
+Gate: refused
+
+Criterion 4:
+
+Evidence from python app.py chunks -n 5
+
+Chunk: dining_the_ridgeway_cafe.txt
+Produced by: chunker.py::split_documents
+
+The Ridgeway Café
+
+Second-year here. Wait times: 10 to 15 minutes at 12:30, none after 2:00. The thing worth going for is the only place on campus with real espresso. The thing to know is that seating is tight; about 40 seats for a building of 900.
+
+Hours are 7:00am to 4:00pm weekdays only. Costs declining balance only, no meal swipes.
+
+Criterion 5:
+
+Question: What do students say about how difficult it is to find parking?
+
+1. admin_parking_permits.txt — distance 0.5795
+
+
 
 <!-- Underneath, paste the REAL output for each criterion from one of your
      runs — the actual text your system produced, not a description of it.
