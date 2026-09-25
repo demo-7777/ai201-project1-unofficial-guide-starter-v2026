@@ -17,6 +17,9 @@ rest of the project if they were wrong:
    install needs neither PyTorch nor a reachable Hugging Face. See `_embedder`.
 """
 
+import re
+from rank_bm25 import BM25Okapi
+
 import os
 import shutil
 from dataclasses import dataclass
@@ -178,6 +181,7 @@ def build_index(
     return len(chunks)
 
 
+
 def search(
     question: str,
     top_k: int | None = None,
@@ -185,9 +189,7 @@ def search(
     variant: str = "default",
 ) -> list[Result]:
     """
-    Retrieve the chunks closest in meaning to a question.
-
-    Returns them nearest-first, each with its distance.
+    Retrieve chunks using a combination of semantic similarity and BM25.
     """
     top_k = top_k or config.TOP_K
     name = config.collection_name(corpus, variant)
@@ -199,25 +201,55 @@ def search(
             f"No index called '{name}'. Run `python app.py index` first."
         ) from exc
 
+    # Get semantic distances for every chunk.
     raw = collection.query(
         query_embeddings=embed([question]),
-        n_results=min(top_k, collection.count()),
+        n_results=collection.count(),
     )
 
-    results: list[Result] = []
-    for text, meta, distance in zip(
-        raw["documents"][0], raw["metadatas"][0], raw["distances"][0]
+    documents = raw["documents"][0]
+    metadatas = raw["metadatas"][0]
+    distances = raw["distances"][0]
+
+    # BM25 keyword scores.
+    def tokenize(text: str) -> list[str]:
+        return re.findall(r"\w+", text.lower())
+
+    tokenized_docs = [tokenize(text) for text in documents]
+    bm25 = BM25Okapi(tokenized_docs)
+    bm25_scores = bm25.get_scores(tokenize(question))
+
+    max_bm25 = max(bm25_scores) if len(bm25_scores) else 0
+
+    ranked = []
+
+    for text, meta, distance, bm25_score in zip(
+        documents, metadatas, distances, bm25_scores
     ):
-        results.append(
-            Result(
-                text=text,
-                source=str(meta.get("source", "unknown")),
-                label=f"{meta.get('source', 'unknown')}#{meta.get('index', 0)}",
-                distance=float(distance),
-                produced_by=str(meta.get("produced_by", "unknown")),
+        semantic_score = max(0.0, 1.0 - float(distance))
+        keyword_score = (
+            float(bm25_score) / max_bm25 if max_bm25 > 0 else 0.0
+        )
+
+        # Semantic retrieval still has more influence.
+        hybrid_score = (0.7 * semantic_score) + (0.3 * keyword_score)
+
+        ranked.append(
+            (
+                hybrid_score,
+                Result(
+                    text=text,
+                    source=str(meta.get("source", "unknown")),
+                    label=f"{meta.get('source', 'unknown')}#{meta.get('index', 0)}",
+                    distance=float(distance),
+                    produced_by=str(meta.get("produced_by", "unknown")),
+                ),
             )
         )
-    return results
+
+    ranked.sort(key=lambda item: item[0], reverse=True)
+
+    return [result for _, result in ranked[:top_k]]
 
 
 def index_exists(corpus: str | None = None, variant: str = "default") -> bool:

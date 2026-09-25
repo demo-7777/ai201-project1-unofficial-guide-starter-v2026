@@ -186,9 +186,21 @@ I used AI to help revise the chunking logic in chunker.py. It suggested grouping
 | 4. Sampled chunks have enough context | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
 | 5. Relevant source appears in top 3 | 5 of 5 | 2 of 5 | 2 of 5 | 2 of 5 | MISSED |
 
-Criterion 1 and 2: 
+Run evidence produced by: `run_eval.py::main`
+Retrieval produced by: `store.py::search`
+Chunks produced by: `chunker.py::split_documents`
 
-According to *admin_parking_permits.txt*, student permits for the west lots sell out in about three days, while the east lot never sells out because it is a 12-minute walk. There is no waitlist, so students who miss the window legally park on Verrill Street and walk in.
+Criterion 1: 
+
+Question: What do students say about professors' office hour availability?
+
+Best distance: 0.5168
+
+I do not have enough information to answer this question.
+
+Criterion 2:
+
+I do not have enough information in the provided documents to answer what lunches students mention ordering most often.
 
 Criterion 3: 
 
@@ -234,11 +246,11 @@ Question: What do students say about how difficult it is to find parking?
 
 | # | Criterion | Verdict | How I decided |
 |---|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
+| 1 | Retrieved chunk contains the answer  | MISSED | Only 1 of 5 test questions had a retrieved chunk that clearly contained the answer, below the 4 of 5 target |
+| 2 | Every answer names a source | MISSED | Several generated answers were refusals that did not name a source document, so the 5 of 5 target was not met. |
+| 3 | Gate stops out-of-corpus questions | MET | The relevance gate refused all 5 out of scope questions, which exceeded the 4 of 5 target. |
+| 4 | Sampled chunks have enough context | MET | I reviewed the five sampled chunks and all 5 were understandable without neighboring chunks, exceeding the 4 of 5 target. |
+| 5 | Relevant source appears in top 3 | MISSED | A relevant source appeared in the top 3 for only 2 of 5 test questions, below the 5 of 5 target. |
 
 ## Diagnoses
 
@@ -260,11 +272,34 @@ Question: What do students say about how difficult it is to find parking?
 
      Milestone 3. -->
 
+### Criterion 1 — Retrieved chunks contain the answer
+
+**Stage:** Retrieval
+
+For four of the five test questions, the retrieved chunks did not contain enough information to answer the question. For example, the office-hours, roommate-change, and gym questions returned chunks that were related to campus life but did not contain the specific information being asked for. Because the answer was missing before generation began, the failure happened at retrieval.
+
+### Criterion 2 — Every answer names a source
+
+**Stage:** Generation
+
+Several responses correctly refused to answer because the retrieved documents did not contain enough information, but those refusal responses did not name any source document. Since the retrieved source list existed but the final generated response omitted source names, this failure happened during generation.
+
+### Criterion 5 — Relevant source appears in top 3
+
+**Stage:** Retrieval
+
+Relevant sources were not consistently ranked near the top. The parking question retrieved `admin_parking_permits.txt` as the top result, but several other questions returned unrelated or only loosely related documents in the top results. This suggests the semantic retrieval method was matching general topic similarity without consistently finding documents containing the exact information requested.
+
+
 ## The Improvement
 
 **What I changed:**
 
+I changed retrieval from semantic vector search alone to a hybrid approach that combines semantic similarity with BM25 keyword matching. The hybrid score gives more weight to semantic similarity while also considering exact keyword matches.
+
 **Why I picked it:**
+
+My diagnoses showed that Criteria 1 and 5 were mainly failing during retrieval. Several questions returned documents that were generally related to campus life but did not contain the specific information being requested, so I tested whether adding keyword matching would rank more useful documents higher.
 
 <!-- Connect it to a specific diagnosis above in one sentence. If you can't,
      you picked a fix because it sounded impressive. -->
@@ -283,6 +318,8 @@ Question: What do students say about how difficult it is to find parking?
 | 5. | | | | | |
 
 **Did it help?**
+
+The hybrid search did not meaningfully improve the measured results. Criteria 1 and 5 still missed their original targets, and the same four questions still did not retrieve enough information to produce supported answers. The change altered which documents were returned and their ranking, but it did not increase the number of test questions the system could answer correctly.
 
 <!-- Say plainly whether it did, and how you know. If it made things worse,
      say that — a change that backfired, honestly reported, earns full credit
