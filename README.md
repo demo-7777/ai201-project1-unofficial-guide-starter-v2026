@@ -153,6 +153,10 @@ I used AI to help review my five test questions and make them more specific and 
 
 I used AI to help revise the chunking logic in chunker.py. It suggested grouping text by paragraph boundaries with a target size of about 500 characters instead of using the starter’s fixed 800-character windows. I added that approach, ran the index again, and checked five sample chunks to make sure they were still understandable on their own.
 
+**3.**
+
+I used AI to help review the Week 2 test results and identify where the failures were happening in the pipeline. It suggested that Criteria 1 and 5 were mainly retrieval problems because the returned chunks often did not contain the specific information needed, while Criterion 2 was a generation problem because refusal responses did not name sources. I used that diagnosis to choose hybrid search with BM25 as my single improvement, then compared the before and after evaluation results to see if it helped.
+
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
      claims earns nothing.
@@ -330,6 +334,10 @@ The hybrid search did not meaningfully improve the measured results. Criteria 1 
 
 ## What's Still Broken
 
+Criteria 1 and 5 are still missed because retrieval does not consistently return chunks containing the specific information needed by the question. Adding BM25 changed the ranking of some documents, but it did not improve the overall test results. A next step would be to try a different retrieval weighting, increase top-k, or test a different chunking strategy.
+
+Criterion 2 is still missed because refusal responses do not name a source document. A next step would be to change the generation prompt so that even refusal responses identify the retrieved sources. I stopped after the single required improvement so I could measure its effect without mixing multiple changes together.
+
 <!-- For each criterion still missed after your fix: what you'd do about it,
      and why you stopped where you did.
 
@@ -339,6 +347,8 @@ The hybrid search did not meaningfully improve the measured results. Criteria 1 
      Milestone 5. -->
 
 ## What I'd Do Differently
+
+I would change Criterion 5 so that it measures whether the top three retrieved chunks actually contain the answer instead of only requiring a relevant source. During testing, some sources were related to the topic but still did not contain enough information to answer the question. Measuring whether the answer is present would make the criterion more precise.
 
 <!-- Knowing what you know now — which of your five criteria would you write
      differently, and why?
